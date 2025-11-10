@@ -40,7 +40,7 @@ A web-based **Production Management System** developed using **PHP (CodeIgniter 
 ---
 
 ## 👩‍💻 Author
-**Sadiya S**  
+**Sadiya **  
 > Mini Project – Computer Science & Engineering  
 > Maharaja Institute of Technology, Thandavapura  
 
