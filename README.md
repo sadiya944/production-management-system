@@ -50,33 +50,3 @@ A web-based **Production Management System** developed using **PHP (CodeIgniter 
 This project is created for academic purposes. Modification and learning use are allowed.
 
 
-# Screenshot
-- **Login**
-<picture>
-    <img src="ss/0.PNG" alt="Login">
-</picture>
-
-- **Dashboard**
-<picture>
-    <img src="ss/1.PNG" alt="Dashboard">
-</picture>
-
-- **Planning**
-<picture>
-    <img src="ss/2.PNG" alt="Planning">
-</picture>
-
-- **Production**
-<picture>
-    <img src="ss/3.PNG" alt="Production">
-</picture>
-
-- **Machine**
-<picture>
-    <img style="width:200px" src="ss/4.PNG" alt="Dashboard">
-</picture>
-
-- **Reports**
-<picture>
-    <img src="ss/5.PNG" alt="Reports">
-</picture>
