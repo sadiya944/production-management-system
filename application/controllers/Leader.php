@@ -523,7 +523,96 @@ class Leader extends CI_Controller
 
         redirect(site_url('leader/sorting'));
     }
-    
+     public function report()
+    {
+        $start = $this->input->get_post('start_date');
+        $end   = $this->input->get_post('end_date');
+
+        if (empty($start) && empty($end)) {
+            $end = date('Y-m-d');
+            $start = date('Y-m-d', strtotime('-7 days'));
+        }
+
+        $leader_id = $this->session->userdata('user_id');
+
+        $sql = "SELECT sr.id_sorting, sr.finished, sr.waste, pl.start_date, pl.plan_name, project.project_name, staff.staff_name, product.product_name
+                FROM sorting_report sr
+                JOIN plan_shift ps ON sr.id_planshift = ps.id_planshift
+                JOIN planning pl ON ps.id_plan = pl.id_plan
+                JOIN project ON pl.id_project = project.id_project
+                JOIN staff ON ps.id_staff = staff.id_staff
+                JOIN product ON project.id_product = product.id_product
+                WHERE pl.start_date BETWEEN ? AND ?";
+                 $params = [$start, $end];
+
+        if (!empty($leader_id)) {
+            $sql .= " AND ps.id_staff = ?";
+            $params[] = $leader_id;
+        }
+
+        $sql .= " ORDER BY pl.start_date DESC";
+
+        $data['report'] = $this->db->query($sql, $params)->result();
+        $data['start_date'] = $start;
+        $data['end_date'] = $end;
+        $data['content'] = 'leader/report';
+        $data['navlink'] = 'report';
+
+        $this->load->view('leader/vbackend', $data);
+    }
+
+    public function export_report_csv()
+    {
+        $start = $this->input->get_post('start_date');
+         $end   = $this->input->get_post('end_date');
+
+        if (empty($start) && empty($end)) {
+            $end = date('Y-m-d');
+            $start = date('Y-m-d', strtotime('-7 days'));
+        }
+
+        $leader_id = $this->session->userdata('user_id');
+
+        $sql = "SELECT sr.id_sorting, sr.finished, sr.waste, pl.start_date, pl.plan_name, project.project_name, staff.staff_name, product.product_name
+                FROM sorting_report sr
+                JOIN plan_shift ps ON sr.id_planshift = ps.id_planshift
+                JOIN planning pl ON ps.id_plan = pl.id_plan
+                JOIN project ON pl.id_project = project.id_project
+                JOIN staff ON ps.id_staff = staff.id_staff
+                JOIN product ON project.id_product = product.id_product
+                WHERE pl.start_date BETWEEN ? AND ?";
+
+        $params = [$start, $end];
+
+        if (!empty($leader_id)) {
+            $sql .= " AND ps.id_staff = ?";
+            $params[] = $leader_id;
+            }
+
+        $sql .= " ORDER BY pl.start_date DESC";
+
+        $rows = $this->db->query($sql, $params)->result();
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=leader_report_'.date('Ymd_His').'.csv');
+
+        $out = fopen('php://output', 'w');
+        fputcsv($out, ['Date','Plan','Project','Leader','Product','Finished','Waste']);
+        foreach ($rows as $r) {
+            fputcsv($out, [
+                $r->start_date ?? '',
+                $r->plan_name ?? '',
+                $r->project_name ?? '',
+                $r->staff_name ?? '',
+                $r->product_name ?? '',
+                $r->finished ?? '',
+                $r->waste ?? '',
+                ]);
+        }
+        fclose($out);
+        exit;
+    }
+
     public function detailplanning()
     {
         $data = [
